@@ -1,0 +1,631 @@
+<% content_for :head do %>
+
+    <%= stylesheet_link_tag 'app.min' %>
+    <%= stylesheet_link_tag 'sweetalert2.min' %>
+    <%= stylesheet_link_tag 'notiFace' %>
+    <%= javascript_include_tag 'jquery.min' %>
+    <%= javascript_include_tag 'bootstrap.min' %>
+    <%= javascript_include_tag 'jquery.nicescroll.min' %>
+    <%= javascript_include_tag 'waves.min' %>
+    <%= javascript_include_tag 'bootstrap-growl.min' %>
+    <%= javascript_include_tag 'sweetalert2.min' %>
+    <%= javascript_include_tag 'es6-promise.min' %>
+    <%= javascript_include_tag 'functions' %>
+    <%= javascript_include_tag 'notifications' %>
+    <%= javascript_include_tag 'jquery.min' %>
+
+        <script src="vendors/bower_components/jquery-placeholder/jquery.placeholder.min.js"></script>
+
+        <style type="text/css">
+            .table > thead > tr > th:first-child, .table > tbody > tr > th:first-child, .table > tfoot > tr > th:first-child, .table > thead > tr > td:first-child, .table > tbody > tr > td:first-child, .table > tfoot > tr > td:first-child {
+                padding-left: 30px;
+            }
+            .table > thead > tr > th:last-child, .table > tbody > tr > th:last-child, .table > tfoot > tr > th:last-child, .table > thead > tr > td:last-child, .table > tbody > tr > td:last-child, .table > tfoot > tr > td:last-child {
+                padding-right: 30px;
+            }
+
+
+        </style>
+
+    <script>
+        $( document ).ready(function() {
+
+            $.urlParam = function(name){
+                var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                return results[1] || 0;
+            }
+
+            var getoken= $.urlParam('token');
+
+            var formData = new FormData();
+            formData.append("token", getoken);
+            var periodo = "";
+
+            $.ajax
+            ({
+                type: "POST",
+                url: 'http://pprd504ms01.itesm.mx/sidi/v1/alumno/getAlumno',
+                async: false,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+
+                    var dataParse = data.data;
+                    periodo = dataParse.periodo;
+                    $("#nameT").html(dataParse.nombre+' <i class="md-expand-more"></i>');
+                    $("#nameL").text(dataParse.nombre);
+                    $("#matrL").text(dataParse.matricula);
+                    $("#niveL").text(dataParse.nivel);
+                    $("#carrL").text(dataParse.carrera);
+                    $("#semL").text(dataParse.periodo);
+                    $("#concL").text(dataParse.concentracion);
+                    $("#modL").text(dataParse.modalidad);
+                    $("#campL").text(dataParse.campus);
+
+                    var arrNoti = data.notifications;
+                    notification(arrNoti,0);
+
+                    $("#initL").attr("href", "index.html?token="+data.token);
+		    $("#initB").attr("href", "index.html?token="+data.token);
+
+                }
+            })
+
+	
+		var formDataH = new FormData();
+		formDataH.append("token", getoken);
+	    var sumaT = 0;
+		$.ajax
+			({
+				type: "POST",
+				url: 'http://pprd504ms01.itesm.mx/sidi/v1/boleta/getBoleta',
+				async: false,
+				data: formDataH,
+				processData: false,
+				contentType: false,
+				success: function (data) {
+
+					var dataParse = data.data;
+					$.each(dataParse, function(k, v) {
+                        if(k!=6) {
+                            buildBoleta(k,v);
+                            sumaT+=v[1];
+                        }else{
+
+                        }
+					});
+
+                    $("#s7").html("<strong>"+'$' + sumaT.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")+"</strong>");
+                    $("#sumaT").val(sumaT);
+				}
+			})
+
+	var formDataI = new FormData();
+		formDataI.append("token", getoken);
+		$.ajax
+			({
+				type: "POST",
+				url: 'http://pprd504ms01.itesm.mx/sidi/v1/planes/getPlan',
+				async: false,
+				data: formDataI,
+				processData: false,
+				contentType: false,
+				success: function (data) {
+
+					var dataParse = data.data;
+					$.each(dataParse, function(k, v) {
+                        if(k!=0) {
+                            buildPlan(v);
+                        }else{
+
+                        }
+					});
+
+				}
+			})
+
+        });
+
+	function buildBoleta(num,arr){
+        if(num==0){
+            $("#coleg").text(arr[0]);
+            $("#coleg").attr('id', arr[1]);
+            var piv = arr[1];
+            if(piv.toString().indexOf('-') != 0){
+                $("#c1").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")).css('text-align','right');
+            }else{
+                $("#a1").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")).css('text-align','right');
+            }
+            $("#s1").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        }else if(num==1){
+            $("#cred").text(arr[0]);
+            $("#cred").attr('id', arr[1]);
+            var piv = arr[1];
+            if(piv.toString().indexOf('-') != 0){
+                $("#c2").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")).css('text-align','right');
+            }else{
+                $("#a2").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")).css('text-align','right');
+            }
+            $("#s2").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        }else if(num==2){
+            $("#beca").text(arr[0]);
+            $("#beca").attr('id', arr[1]);
+            var piv = arr[1];
+            if(piv.toString().indexOf('-') != 0){
+                $("#c3").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")).css('text-align','right');
+            }else{
+                $("#a3").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")).css('text-align','right');
+            }
+            $("#s3").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        } else if(num==3) {
+            $("#seguro").text(arr[0]);
+            $("#seguro").attr('id', arr[1]);
+            var piv = arr[1];
+            if(piv.toString().indexOf('-') != 0){
+                $("#c4").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")).css('text-align','right');
+            }else{
+                $("#a4").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")).css('text-align','right');
+            }
+            $("#s4").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        }else if(num==4){
+            $("#seguroMedico").text(arr[0]);
+            $("#seguroMedico").attr('id', arr[1]);
+            var piv = arr[1];
+            if(piv.toString().indexOf('-') != 0){
+                $("#c5").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")).css('text-align','right');
+            }else{
+                $("#a5").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")).css('text-align','right');
+            }
+            $("#s5").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        }else if(num==5){
+            $("#pago").text(arr[0]);
+            $("#pago").attr('id', arr[1]);
+            var piv = arr[1];
+            if(piv.toString().indexOf('-') != 0){
+                $("#c6").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")).css('text-align','right');
+            }else{
+                $("#a6").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")).css('text-align','right');
+            }
+            $("#s6").text('$' + arr[1].toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+        }
+
+	}
+
+
+    function buildPlan(arr){
+
+	var monthNames = [
+	  "Ene", "Feb", "Mar",
+	  "Abr", "May", "Jun", "Jul",
+	  "Ago", "Sep", "Oct",
+	  "Nov", "Dic"
+	];
+
+	var total = $("#sumaT").val();
+	var resT = $("#sumaT").val();
+	var resTotal= total/5;
+
+	var strDiv= '<label><input type="radio" name="sample" value=""><i class="input-helper"></i>PLAN '+arr[0]+' PARCIALIDADES</label><div class="table-responsive" tabindex="1" style="overflow: hidden; outline: none;margin-top: 10px;    margin-left: 30px;"><table class="table table-striped"><tbody>';
+
+	var recArray=arr[1];
+	for(var i=0; i<arr[1].length;i++){
+	var date = new Date(recArray[i]);
+	var day = date.getDate();
+	var monthIndex = date.getMonth();
+	var year = date.getFullYear();
+	var format = day + '/' + (monthNames[monthIndex]) + '/' +  year;
+		if(i==0){
+			strDiv+='<tr><td style="padding-left: 10px;padding-bottom: 12px;">'+format+'</td><td style="padding-right: 10px;padding-bottom: 12px;text-align: right;"><a data-trigger="hover" data-toggle="popover" data-placement="left" data-content="Seguro Gastos Médicos - $1,973.00 Mensualidad Colegiatura - $5,290.00" title="" data-original-title="Desglose">'+'$'+resTotal.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")+'</a></td></tr>';
+		}else{
+			strDiv+='<tr><td style="padding-left: 10px;padding-bottom: 12px;">'+format+'</td><td style="padding-right: 10px;padding-bottom: 12px;text-align: right;">'+'$'+resTotal.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")+'</td></tr>';
+		}
+	}	
+
+       strDiv+='<tr><td style="padding-left: 10px;padding-bottom: 12px;"><strong>Total a pagar</strong></td><td style="padding-right: 10px;padding-bottom: 12px;text-align: right;"><strong>'+'$'+parseInt(resT).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")+'</strong></td></tr>';
+
+          strDiv+='</tbody></table></div>';
+
+	$("#parciTable").append(strDiv);
+    $("#pagoEf").html("<strong>"+'$'+parseInt(resT).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")+"</strong>");
+    }
+
+    function suma(mas){
+            var origin = $("#sumaT").val();
+            var first = parseFloat(origin);
+            var second = parseFloat(mas);
+            var res = first + second;
+
+            $("#s7").html("<strong>"+'$' + res.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")+"</strong>");
+            $("#sumaT").val(res);
+    }
+
+    function resta(menos){
+        var origin = $("#sumaT").val();
+        var first = parseFloat(origin);
+        var second = parseFloat(menos);
+        var res = first - second;
+
+        $("#s7").html("<strong>"+'$' + res.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")+"</strong>");
+        $("#sumaT").val(res);
+    }
+
+    </script>
+    </head>
+    <body class="p-b-15">
+        <header id="header">
+            <ul class="header-inner">
+                <li class="logo">
+                    <a id="initL" href="">
+                        <img src="img/logotec.png" alt="">
+                        <span>
+                            <strong>| &nbsp;&nbsp;Sistema de Inscripciones</strong>
+                        </span>
+                    </a>
+                </li>
+
+                <li class="pull-right yes-xs">
+                    <ul class="top-menu">
+                        <li class="dropdown hidden-xs" >
+                            <a data-toggle="dropdown" href="" class="name" style="margin-bottom:-10px;">
+                                <div id="noti_Counter"></div>
+
+                                <div id="noti_Button"></div>
+                            </a>
+                        </li>
+                        <li class="dropdown hidden-xs">
+                            <a data-toggle="dropdown" href="" class="name">AYUDA <i class="md-expand-more"></i></a>
+                            <ul class="dropdown-menu dm-icon pull-right">
+                                <li>
+                                    <a href=""><i class="md md-live-help"></i> Tutorial</a>
+                                </li>
+                                <li>
+                                    <a href=""><i class="md md-email"></i> Contacto</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="hidden-xs"  id="chat-trigger" data-trigger="#chat">
+                            <a id="nameT" href="" class="name"></a>
+                            <!-- <ul class="dropdown-menu dm-icon pull-right">
+
+                                <li>
+                                    <a href=""><i class="md md-settings-power"></i> Salir</a>
+                                </li>
+                            </ul> -->
+                        </li>
+                        <li class="visible-xs-block" id="chat-trigger" data-trigger="#chat">
+                            <a class="tm-chat" href=""></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </header>
+        <ol class="breadcrumb">
+            <li><a id="initB" href="">Inicio</a></li>
+            <li class="active">Boleta de Pago</li>
+        </ol>
+
+        <section id="main">
+            <aside id="chat">
+                <div class="listview">
+                    <h2>Mi Información</h2>
+                    <hr>
+                    <ul class="material-list">
+                        <li>
+                            <p id="nameL" class="element"></p>
+                            <p class="description">Nombre</p>
+                        </li>
+                        <li>
+                            <p id="matrL" class="element"></p>
+                            <p class="description">Matrícula</p>
+                        </li>
+                        <li>
+                            <p id="niveL" class="element"></p>
+                            <p class="description">Nivel</p>
+                        </li>
+                        <li>
+                            <p id="carrL" class="element"></p>
+                            <p class="description">Carrera</p>
+                        </li>
+                        <li>
+                            <p id="semL" class="element"></p>
+                            <p class="description">Semestre</p>
+                        </li>
+                        <li>
+                            <p id="concL" class="element"></p>
+                            <p class="description">Concentración</p>
+                        </li>
+                        <li>
+                            <p id="modL" class="element"></p>
+                            <p class="description">Modalidad</p>
+                        </li>
+                        <li>
+                            <p id="campL" class="element">Monterrey</p>
+                            <p class="description">Campus</p>
+                        </li>
+                    </ul>
+                    <hr>
+                    <a href="login.html.erb"><i class="md md-settings-power"></i> Salir</a>
+                </div>
+            </aside>
+            <section id="content">
+                <div class="container">
+                    <div class="block-header custom"> <!-- Main title -->
+                        <h1>
+                            <i class="md md-local-atm"></i> Boleta de Pago
+                        </h1>
+                        <div class="pull-right">
+                            <a href="inicio.html.erb" class="btn btn-default btn-icon-text waves-effect m-t-20 waves-effect">
+                                <i class="md md-arrow-back"></i> Regresar a Inicio
+                            </a>
+                            <button class="btn btn-default btn-icon-text waves-effect m-t-20" onclick="javascript:window.print();">
+                                <i class="md md-print"></i> Imprimir
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card" style="padding-bottom: 1px;overflow: hidden;">
+                                <div class="card-header ch-alt">
+                                    <h2>Desglose de información <small style="color: #888888;">A continuación se te presentan los importes a pagar por concepto de tu inscripción. Cualquier observación de lo presentado, favor de comunicarte con tu campus.</small></h2>
+                                </div>
+
+                                <div id="buildBol" class="table-responsive" tabindex="1" style="overflow: hidden; margin: 40px;font-size: 14px;">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Descripción</th>
+                                                <th style="text-align: right;">Cargo</th>
+                                                <th style="text-align: right;">Abono</th>
+                                                <th style="text-align: right;">Saldo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><span id="coleg"></span></td>
+                                                <td id="c1"></td>
+                                                <td id="a1"></td>
+                                                <td id="s1" style="text-align: right;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td><span id="cred"></span></td>
+                                                <td id="c2"></td>
+                                                <td id="a2" ></td>
+                                                <td id="s2" style="text-align: right;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td><span id="beca"></span></td>
+                                                <td id="c3"></td>
+                                                <td id="a3"></td>
+                                                <td id="s3" style="text-align: right;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td><span id="seguro"></span><button class="btn btn-default btn-xs waves-effect cancelar"><i class="md md-clear"></i></button><button style="margin-left:-20px; visibility: hidden;" class="btn btn-default btn-xs waves-effect agregar"><i class="md md-add"></i></button></td>
+                                                <td id="c4"></td>
+                                                <td id="a4"></td>
+                                                <td id="s4" style="text-align: right;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td><span id="seguroMedico"></span> <button class="btn btn-default btn-xs waves-effect cancelar"><i class="md md-clear"></i></button><button style="margin-left:-20px; visibility: hidden;" class="btn btn-default btn-xs waves-effect agregar"><i class="md md-add"></i></button> <button class="btn btn-default btn-xs waves-effect cambiar">Cambiar</button></td>
+                                                <td id="c5"></td>
+                                                <td id="a5"></td>
+                                                <td id="s5" style="text-align: right;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td><span id="pago"></span></td>
+                                                <td id="c6"></td>
+                                                <td id="a6"></td>
+                                                <td id="s6" style="text-align: right;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size: 16px;"><span id="total"><strong>Total a pagar</strong></span></td>
+                                                <td id="c7"></td>
+                                                <td id="a7"></td>
+                                                <td id="s7" style="text-align: right;font-size: 16px;"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header ch-alt">
+                                    <h2>Planes de pago <small style="color: #888888;">Planes de pago disponibles para el semestre Ago-Dic 2016</small></h2>
+                                </div>
+                                <div class="card-body card-padding">
+                                    <div class="radio m-b-15">
+                                        <label>
+                                            <input type="radio" name="sample" value="" checked="checked">
+                                            <i class="input-helper"></i>
+                                            PLAN DE CONTADO
+
+                                        </label>
+                                        <div class="table-responsive" tabindex="1" style="overflow: hidden; outline: none;margin-top: 10px;margin-left: 30px;margin-bottom: 30px;">
+                                            <table class="table table-striped">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="padding-left: 10px;padding-bottom: 12px;"><strong>Total a pagar</strong></td>
+                                                        <td id="pagoEf" style="padding-right: 10px;padding-bottom: 12px;text-align: right;"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div id="parciTable" class="radio m-b-15">
+                                        
+                                    </div>
+									 <button class="btn btn-primary btn-block waves-effect continuar">Continuar</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </section>
+        </section>
+    <input type="hidden" id="sumaT" value=""/>
+        <!-- Older IE warning message -->
+        <!--[if lt IE 9]>
+            <div class="ie-warning">
+                <h1 class="c-white">Warning!!</h1>
+                <p>You are using an outdated version of Internet Explorer, please upgrade <br/>to any of the following web browsers to access this website.</p>
+                <div class="iew-container">
+                    <ul class="iew-download">
+                        <li>
+                            <a href="http://www.google.com/chrome/">
+                                <img src="img/browsers/chrome.png" alt="">
+                                <div>Chrome</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.mozilla.org/en-US/firefox/new/">
+                                <img src="img/browsers/firefox.png" alt="">
+                                <div>Firefox</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://www.opera.com">
+                                <img src="img/browsers/opera.png" alt="">
+                                <div>Opera</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.apple.com/safari/">
+                                <img src="img/browsers/safari.png" alt="">
+                                <div>Safari</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
+                                <img src="img/browsers/ie.png" alt="">
+                                <div>IE (New)</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <p>Sorry for the inconvenience!</p>
+            </div>
+        <![endif]-->
+
+         <!-- Javascript Libraries -->
+		
+		
+
+
+        <script>
+
+            $(".agregar").click(function(event) {
+                var element = $(this);
+                swal({
+                    title: '¿Estás seguro?',
+                    text: "Tu seguro sera agregado a tu balance del saldo",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#25AF30',
+                    cancelButtonColor: '#DD6B55',
+                    confirmButtonText: 'Agregar'
+                }).then(function() {
+                    element.parents("tr").css('text-decoration','');
+                    element.css('visibility','hidden');
+                    element.parents("td").children(".cancelar").css('visibility','visible');
+                    element.parents("td").children(".cambiar").css('visibility','visible');
+                    var plus= element.parents("td").children("span").attr('id');
+                    suma(plus);
+                    swal(
+                            'Agregado exitosamente',
+                            'Tu seguro ha sido agregado exitosamente.',
+                            'success'
+                    );
+                });
+            });
+
+            $(".cancelar").click(function(event) {
+                var element = $(this);
+                swal({
+                    title: '¿Estás seguro?',
+                    text: "Es necesario entregar el comprobante del seguro que va lo va reemplazar.",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#25AF30',
+                    cancelButtonColor: '#DD6B55',
+                    confirmButtonText: 'Si, deseo cancelar.'
+                }).then(function() {
+                    element.parents("tr").css('text-decoration','line-through');
+                    element.css('visibility','hidden');
+                    element.parents("td").children(".agregar").css('visibility','visible');
+                    element.parents("td").children(".cambiar").css('visibility','hidden');
+                    var minus= element.parents("td").children("span").attr('id');
+                    resta(minus);
+                    swal(
+                            'Cancelación exitosa',
+                            'Tu seguro ha sido cancelado exitosamente.',
+                            'success'
+                    );
+                });
+            });
+
+            $(".continuar").click(function(event) {
+                var element = $(this);
+                swal({
+                    title: '¿Estás seguro?',
+                    text: "Su información de pago no podrá ser modificada posteriormente.",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#25AF30',
+                    cancelButtonColor: '#DD6B55',
+                    confirmButtonText: 'Sí, deseo proceder al pago.'
+                }).then(function() {
+                    element.parents("tr").remove();
+                    swal(
+                            'Se guardó tu selección',
+                            '',
+                            'success'
+                    );
+
+                    $.urlParam = function(name){
+                        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                        return results[1] || 0;
+                    }
+
+                    var token= $.urlParam('token');
+                    location.assign("index.html?token="+token+"&end=true");
+                });
+            });
+
+            $(".cambiar").click(function() {
+                swal({
+                    title: 'Selecciona tu nuevo seguro',
+                    input: 'select',
+                    inputOptions: {
+                        'Seguro Gastos Médicos Mayores': 'Seguro Gastos Médicos Mayores',
+                        'Seguro Gastos Médicos Mayores de Cobertura Máxima': 'Seguro Gastos Médicos Mayores de Cobertura Máxima',
+                    },
+                    inputPlaceholder: 'Selecciona una opción',
+                    showCancelButton: true,
+                    inputValidator: function(value) {
+                        return new Promise(function(resolve, reject) {
+                            if (value !== '') {
+                                resolve()
+                            } else {
+                                reject('Es necesario seleccionar una opción')
+                            }
+                        })
+                    }
+                }).then(function(result) {
+                    $("#seguroMedico").text(result);
+                    swal({
+                        type: 'success',
+                        html: 'Has seleccionado: ' + result
+                    })
+                });
+            });
+        </script>
+<%end%>

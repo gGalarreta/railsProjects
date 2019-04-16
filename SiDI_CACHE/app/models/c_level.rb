@@ -1,0 +1,2 @@
+class CLevel < ApplicationRecord
+end

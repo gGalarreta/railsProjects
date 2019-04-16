@@ -1,0 +1,3 @@
+class CModalidades < ApplicationRecord
+
+end

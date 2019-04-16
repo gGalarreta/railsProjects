@@ -1,0 +1,2 @@
+class CTipoCorreos < ApplicationRecord
+end

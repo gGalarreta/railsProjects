@@ -1,0 +1,526 @@
+<% content_for :head do %>
+    <%= stylesheet_link_tag 'app.min' %>
+    <%= stylesheet_link_tag 'sweetalert-override.min' %>
+    <%= stylesheet_link_tag 'notiFace' %>
+    <%= javascript_include_tag 'jquery.min' %>
+    <%= javascript_include_tag 'bootstrap.min' %>
+    <%= javascript_include_tag 'jquery.nicescroll.min' %>
+    <%= javascript_include_tag 'waves.min' %>
+    <%= javascript_include_tag 'bootstrap-growl.min' %>
+    <%= javascript_include_tag 'sweetalert.min' %>
+    <%= javascript_include_tag 'notifications' %>
+        
+<script>
+	$( document ).ready(function() {
+
+	$.urlParam = function(name){
+		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+		return results[1] || 0;
+	}
+	
+	var getoken= $.urlParam('token');
+
+	var formData = new FormData();
+	formData.append("token", getoken);
+	$("#btnL").val(getoken);
+	$("#saveL").val(getoken);
+	var periodo = "";
+
+			$.ajax
+			({
+				type: "POST",
+				url: 'http://pprd504azms01.itesm.mx:3000/sidi/v1/alumno/getAlumno',
+				async: false,
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (data) {
+					
+					var dataParse = data.data;
+					periodo = dataParse.periodo;
+					$("#nameT").html(dataParse.nombre+' <i class="md-expand-more"></i>');
+					$("#nameL").text(dataParse.nombre);
+					$("#matrL").text(dataParse.matricula);
+					$("#niveL").text(dataParse.nivel);
+					$("#carrL").text(dataParse.carrera);
+					$("#semL").text(dataParse.periodo);
+					$("#concL").text(dataParse.concentracion);
+					$("#modL").text(dataParse.modalidad);
+					$("#campL").text(dataParse.campus);
+					
+					var arrNoti = data.notifications;
+					notification(arrNoti,0);
+
+					$("#initL").attr("href", "index.html?token="+data.token);
+					 
+				}
+			})
+
+		var formDataH = new FormData();
+		formDataH.append("token", getoken);
+		formDataH.append("periodo", periodo);
+	
+		$.ajax
+			({
+				type: "POST",
+				url: 'http://pprd504azms01.itesm.mx:3000/sidi/v1/horario/getHorario',
+				async: false,
+				data: formDataH,
+				processData: false,
+				contentType: false,
+				success: function (data) {
+
+					var dataParse = data.data;
+					$.each(dataParse, function(k, v) {
+						arrGlobalSubjects.push(new Subject(v));
+					});
+
+					
+				}
+			})
+		
+
+	});
+</script>
+
+        <header id="header">
+            <ul class="header-inner">
+                <li class="logo">
+                    <a id="initL" href="">
+                        <img src="img/logotec.png" alt="">
+                        <span>
+                            <strong>| &nbsp;&nbsp;Sistema de Inscripciones</strong>
+                        </span>
+                    </a>
+                </li>
+
+                <li class="pull-right yes-xs">
+                    <ul class="top-menu">
+                        <li class="dropdown hidden-xs" >
+                            <a data-toggle="dropdown" href="" class="name" style="margin-bottom:-10px;">
+                                <div id="noti_Counter"></div>
+
+                                <div id="noti_Button"></div>
+                            </a>
+                        </li>
+                        <li class="dropdown hidden-xs">
+                            <a data-toggle="dropdown" href="" class="name">AYUDA <i class="md-expand-more"></i></a>
+                            <ul class="dropdown-menu dm-icon pull-right">
+                                <li>
+                                    <a href=""><i class="md md-live-help"></i> Tutorial</a>
+                                </li>
+                                <li>
+                                    <a href=""><i class="md md-email"></i> Contacto</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="hidden-xs"  id="chat-trigger" data-trigger="#chat">
+                            <a id="nameT" href="" class="name"></a>
+                            <!-- <ul class="dropdown-menu dm-icon pull-right">
+
+                                <li>
+                                    <a href=""><i class="md md-settings-power"></i> Salir</a>
+                                </li>
+                            </ul> -->
+                        </li>
+                        <li class="visible-xs-block" id="chat-trigger" data-trigger="#chat">
+                            <a class="tm-chat" href=""></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </header>
+        <ol class="breadcrumb">
+            <li><a id="initL" href="">Inicio</a></li>
+            <li class="active">Horario</li>
+        </ol>
+
+        <section id="main">
+            <aside id="chat">
+                <div class="listview">
+                    <h2>Mi Información</h2>
+                    <hr>
+                    <ul class="material-list">
+                         <li>
+                            <p id="nameL" class="element"></p>
+                            <p class="description">Nombre</p>
+                        </li>
+                        <li>
+                            <p id="matrL" class="element"></p>
+                            <p class="description">Matrícula</p>
+                        </li>
+                        <li>
+                            <p id="niveL" class="element"></p>
+                            <p class="description">Nivel</p>
+                        </li>
+                        <li>
+                            <p id="carrL" class="element"></p>
+                            <p class="description">Carrera</p>
+                        </li>
+                        <li>
+                            <p id="semL" class="element"></p>
+                            <p class="description">Semestre</p>
+                        </li>
+                        <li>
+                            <p id="concL" class="element"></p>
+                            <p class="description">Concentración</p>
+                        </li>
+                        <li>
+                            <p id="modL" class="element"></p>
+                            <p class="description">Modalidad</p>
+                        </li>
+                        <li>
+                            <p id="campL" class="element">Monterrey</p>
+                            <p class="description">Campus</p>
+                        </li>
+                    </ul>
+                    <hr>
+                    <a href="login.html.erb"><i class="md md-settings-power"></i> Salir</a>
+                </div>
+            </aside>
+            <section id="content">
+                <div class="container">
+                    <div class="block-header custom"> <!-- Main title -->
+                        <h1>
+                            <i class="md md-event"></i> Realiza tu Horario
+                        </h1>
+                        <div class="pull-right">
+                            <button id="btnL" class="btn btn-default btn-icon-text waves-effect m-t-20 exit-warning">
+                                <i class="md md-arrow-back"></i> Regresar a Inicio
+                            </button>&nbsp;
+                            <button id="saveL" class="btn btn-primary btn-icon-text waves-effect m-t-20 save-warning">
+                                <i class="md md-save"></i> Guardar Horario
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- <div class="card">
+                        <div class="card-header ch-alt">
+                            <h2>Instrucciones</h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            El siguiente horario incluye una selección previa de las materias que te corresponden. Si deseas hacer cambios haz clic en la materia que deseas modificar.
+                        </div>
+                    </div> -->
+
+                    <div class="card" id="cardScheduleSelection">
+                        <div class="card-body card-padding-custom">
+                            <div class="row">
+                                <div class="col-sm-4 col-md-3" id="info-col">
+                                    <div role="tabpanel">
+                                        <div class="tab-content">
+                                            <div role="tabpanel" class="tab-pane subjects-body active" id="subjectsTab">
+                                                <div class="panel-group" role="tablist" aria-multiselectable="true">
+                                                    <div class="panel panel-collapse">
+                                                        <div class="panel-heading" role="tab" id="headingOne">
+                                                            <h4 class="panel-title">
+                                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                                    Materias Académicas
+                                                                </a>
+                                                            </h4>
+                                                        </div>
+                                                        <div id="collapseOne" class="collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                                            <div class="panel-body academic-body">
+                                                                <a role="tab" data-toggle="tab" class="btn btn-default waves-effect small-card subject-card">
+                                                                    <div class="subject-title"></div>
+                                                                    <div class="row">
+                                                                        <div class="col-xs-3">
+                                                                            <ul class="material-list">
+                                                                                <li>
+                                                                                    <p class="element priority"></p>
+                                                                                    <p class="description">Prioridad</p>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                        <div class="col-xs-6">
+                                                                            <ul class="material-list">
+                                                                                <li>
+                                                                                    <p class="element code"></p>
+                                                                                    <p class="description">Clave</p>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                        <div class="col-xs-3">
+                                                                            <ul class="material-list">
+                                                                                <li>
+                                                                                    <p class="element units"></p>
+                                                                                    <p class="description">Unidad</p>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="panel panel-collapse">
+                                                        <div class="panel-heading" role="tab" id="headingTwo">
+                                                            <h4 class="panel-title">
+                                                                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                                    Actividades Deportivas
+                                                                </a>
+                                                            </h4>
+                                                        </div>
+                                                        <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                                            <div class="panel-body sports-body">
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="panel panel-collapse">
+                                                        <div class="panel-heading" role="tab" id="headingThree">
+                                                            <h4 class="panel-title">
+                                                                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                                    Actividades Culturales
+                                                                </a>
+                                                            </h4>
+                                                        </div>
+                                                        <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
+                                                            <div class="panel-body cultural-body">
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="panel panel-collapse">
+                                                        <div class="panel-heading" role="tab" id="headingFour">
+                                                            <h4 class="panel-title">
+                                                                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                                                    Actividades Estudiantiles
+                                                                </a>
+                                                            </h4>
+                                                        </div>
+                                                        <div id="collapseFour" class="collapse" role="tabpanel" aria-labelledby="headingFour">
+                                                            <div class="panel-body student-body">
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div role="tabpanel" class="tab-pane courses-body" id="coursesTab">
+                                                <h3></h3>
+                                                <h4 class="nav-title">Cursos</h4>
+                                                <!-- Panel Template -->
+                                                <div class="panel-group" role="tablist" aria-multiselectable="true">
+                                                    <div class="panel panel-collapse accordion-item">
+                                                        <div class="panel-heading" role="tab" id="courseHeading">
+                                                            <h4 class="panel-title">
+                                                                <a data-toggle="collapse" href="#course" aria-expanded="true" aria-controls="course">
+                                                                </a>
+                                                            </h4>
+                                                        </div>
+                                                        <div id="course" class="collapse" role="tabpanel" aria-labelledby="courseHeading">
+                                                            <div class="panel-body course-body">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> <!-- End Panel Template -->
+                                                <a href='#subjectsTab' aria-controls='subjectsTab' class='btn btn-info btn-block waves-effect back-btn' role='tab' data-toggle='tab'>Regresar a Materias</a>
+                                            </div>
+                                            <div role="tabpanel" class="tab-pane groups-body" id="groupsTab">
+                                                <a role="tab" data-toggle="tab" class="btn btn-default waves-effect small-card group-card" style="overflow: visible">
+                                                    <div class="subject-title"></div>
+                                                    <div class="row">
+                                                        <div class="col-xs-2">
+                                                            <ul class="material-list">
+                                                                <li>
+                                                                    <p class="element group"></p>
+                                                                    <p class="description">Gpo.</p>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-xs-4">
+                                                            <ul class="material-list">
+                                                                <li>
+                                                                    <p class="element hour"></p>
+                                                                    <p class="description">Hora</p>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-xs-6">
+                                                            <ul class="material-list">
+                                                                <li>
+                                                                    <p class="element days"></p>
+                                                                    <p class="description">Días</p>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <i class="md md-more-horiz more-info"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-8 col-md-9" id="schedule-col">
+                                    <div role="tabpanel" id="schedule-col-inner">
+                                        <ul class="tab-nav" role="tablist">
+                                            <li class="active"><a href="#schedule" aria-controls="schedule" role="tab" data-toggle="tab">Horario</a></li>
+                                            <li><a href="#info" aria-controls="info" role="tab" data-toggle="tab">Resumen</a></li>
+                                        </ul>
+
+                                        <div class="tab-content">
+                                            <div role="tabpanel" class="tab-pane active" id="schedule">
+                                                <p class="schedule-info-bar">
+                                                    Unidades Inscritas: <span id="registeredUnits">0</span> &nbsp; Unidades Límite: <span id="limitUnits">48</span>
+                                                    <span class="pull-right">Tiempo Restante: <span id="timer" class="c-green"></span></span>
+                                                </p>
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped schedule-big" id="scheduleAtSelection">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="bgm-lightblue" style="background-color:#edecec !important;">Hora</th>
+                                                                <th class="bgm-bluegray c-white">Lunes</th>
+                                                                <th class="bgm-bluegray c-white">Martes</th>
+                                                                <th class="bgm-bluegray c-white">Miércoles</th>
+                                                                <th class="bgm-bluegray c-white">Jueves</th>
+                                                                <th class="bgm-bluegray c-white">Viernes</th>
+                                                                <th class="bgm-bluegray c-white">Sábado</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div role="tabpanel" class="tab-pane" id="info">
+                                                <div class="row summary">
+                                                    <div class="col-sm-6 summary-card">
+                                                        <div class="card">
+                                                            <div class="card-header">
+                                                                <h2></h2>
+                                                            </div>
+                                                            <div class="card-body card-padding">
+                                                                <ul class="material-list summary-list">
+                                                                    <li>
+                                                                        <p class="element teachers"></p>
+                                                                        <p class="description">Profesor</p>
+                                                                    </li>
+                                                                    <li>
+                                                                        <p class="element date"></p>
+                                                                        <p class="description">Fecha</p>
+                                                                    </li>
+                                                                    <li>
+                                                                        <p class="element class-schedule"></p>
+                                                                        <p class="description">Horario</p>
+                                                                    </li>
+                                                                    <li>
+                                                                        <p class="element building-classroom"></p>
+                                                                        <p class="description">Edificio y Salón</p>
+                                                                    </li>
+                                                                    <li>
+                                                                        <p class="element options"></p>
+                                                                        <p class="description">Atributos</p>
+                                                                    </li>
+                                                                    <li>
+                                                                        <p class="element parent-course"></p>
+                                                                        <p class="description">Acredita</p>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- Ends Schedule -->
+                    <div class="pull-left yes-xs icons-info"> <!-- Icon info -->
+                        <img src="img/open.png">
+                        Abierta&nbsp; | &nbsp;
+                        <img src="img/closed.png">
+                        Cerrada&nbsp; | &nbsp;
+                        <img src="img/open-overlap.png">
+                        Abierta y empalmada&nbsp; | &nbsp;
+                        <img src="img/closed-overlap.png">
+                        Cerrada y empalmada
+                    </div> <!-- End Icon info -->
+                    <div class="bottom-buttons pull-right"> <!-- Buttons -->
+                        <button class="btn btn-default btn-icon-text waves-effect m-t-20 exit-warning">
+                            <i class="md md-arrow-back"></i>
+                            Regresar a Inicio
+                        </button>&nbsp;
+                        <button class="btn btn-primary btn-icon-text waves-effect m-t-20 save-warning">
+                            <i class="md md-save"></i>
+                            Guardar Horario
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- Older IE warning message -->
+        <!--[if lt IE 9]>
+            <div class="ie-warning">
+                <h1 class="c-white">Warning!!</h1>
+                <p>You are using an outdated version of Internet Explorer, please upgrade <br/>to any of the following web browsers to access this website.</p>
+                <div class="iew-container">
+                    <ul class="iew-download">
+                        <li>
+                            <a href="http://www.google.com/chrome/">
+                                <img src="img/browsers/chrome.png" alt="">
+                                <div>Chrome</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.mozilla.org/en-US/firefox/new/">
+                                <img src="img/browsers/firefox.png" alt="">
+                                <div>Firefox</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://www.opera.com">
+                                <img src="img/browsers/opera.png" alt="">
+                                <div>Opera</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.apple.com/safari/">
+                                <img src="img/browsers/safari.png" alt="">
+                                <div>Safari</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
+                                <img src="img/browsers/ie.png" alt="">
+                                <div>IE (New)</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <p>Sorry for the inconvenience!</p>
+            </div>
+        <![endif]-->
+
+
+
+
+    <%= javascript_include_tag 'jquery.placeholder.min' %>
+
+    <%= javascript_include_tag 'functions' %>
+    <%= javascript_include_tag 'horario' %>
+
+
+    <script>
+          // Creates dummy subjects
+          $(document).ready(function() {
+        $.urlParam = function(name){
+      var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+      return results[1] || 0;
+       }
+
+        var getoken= $.urlParam('token');
+              $scheduleAtSelectionCurrent = printScheduleAtSelection();
+              printSummary();
+              printSubjectCards();
+              // 60 seconds times # of minutes to get duration
+              var iDuration = 60 * 30;
+              timer(iDuration, $("#timer"),getoken);
+          });
+    </script>
+<%end%>

@@ -1,0 +1,168 @@
+<% content_for :head do %>
+    <%= javascript_include_tag 'jquery.min' %>
+    <%= javascript_include_tag 'methods' %>
+    <%= javascript_include_tag 'functions' %>
+    <%= javascript_include_tag 'notifications' %>
+    <%= javascript_include_tag 'jquerysession' %>
+    <%= javascript_include_tag 'sweetalert2.min' %>
+    <%= javascript_include_tag 'bootstrap.min' %>
+    <%= javascript_include_tag 'bootstrap.count' %>
+    <%= javascript_include_tag 'jquery.count' %>
+    <%= javascript_include_tag 'device.min' %>
+    <%= javascript_include_tag 'jquery.mb.YTPlayer' %>
+    <%= javascript_include_tag 'countdown' %>
+    <%= javascript_include_tag 'custom' %>
+    <%= javascript_include_tag 'moment-with-locales' %>
+    <%= javascript_include_tag 'moment-timezone' %>
+    <%= stylesheet_link_tag 'style' %>
+    <%= stylesheet_link_tag 'bootstrap.count' %>
+    <%= stylesheet_link_tag 'font-awesome.min' %>
+    <%= stylesheet_link_tag 'roboto' %>
+    <%= stylesheet_link_tag 'notiFace' %>
+    <%= stylesheet_link_tag 'material-icons' %>
+    <%= stylesheet_link_tag 'sweetalert2.min' %>
+
+<script>
+	$( document ).ready(function() {
+        var arrNoti = ["Tu horario no esta disponible"];
+        notification(arrNoti,1);
+        initTurno("<%= session["turno"]%>");
+	});
+</script>
+</head>
+<body>
+
+<div class="site-wrapper video-background">
+    <a id="bgndVideo" class="player" data-property="{videoURL:'https://www.youtube.com/watch?v=94qyBTS5HUE', containment:'body', autoPlay:true, mute:true, startAt:2, stopAt: 240, quality:'low', opacity:1, }"></a>
+
+ <header id="header">
+            <ul class="header-inner">
+                <li class="logo pull-left yes-xs">
+                    <a>
+                        <img src="<%= asset_path( 'logotec.png' ) %>" alt="">
+                        <span>
+                            <strong>| &nbsp;&nbsp;Sistema de Inscripciones</strong>
+                        </span>
+                    </a>
+                </li>
+
+                <li class="pull-right yes-xs">
+                    <ul class="top-menu">
+			<li id="menuNoti" class="dropdown hidden-xs">
+				
+				<div id="noti_Counter"></div>	
+                		<div id="noti_Button" ></div> 
+			</li>
+                        <li id="menuAyuda" class="dropdown hidden-xs">
+                            <a data-toggle="dropdown" href="" class="name">AYUDA <i class="material-icons" style="font-size:16px">&#xE313;</i></a>
+                            <ul class="dropdown-menu dm-icon pull-right" >
+                                <li>
+                                    <a href="" style="color: #fff;"><i class="material-icons" style="font-size:16px">&#xE0C6;</i> Tutorial</a>
+                                </li>
+                                <li>
+                                    <a href="" style="color: #fff;"><i class="material-icons" style="font-size:16px">&#xE0BE;</i> Contacto</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="hidden-xs"  id="chat-trigger" data-trigger="#chat">
+                            <a id="nameT" href="" class="name"><%= session["nombre"]%><i class='material-icons' style='font-size:16px'>&#xE313;</i></a>
+                            <!-- <ul class="dropdown-menu dm-icon pull-right">
+
+                                <li>
+                                    <a href=""><i class="md md-settings-power"></i> Salir</a>
+                                </li>
+                            </ul> -->
+                        </li>
+                        <li class="visible-xs-block" id="chat-trigger" data-trigger="#chat">
+                            <a class="tm-chat" href=""></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </header>
+	
+
+            <aside id="chat">
+                <div class="listview">
+                    <h2>Mi Información</h2>
+                    <hr>
+                    <ul class="material-list">
+                        <li>
+                            <p id="nameL" class="element"><%= session[:nombre]%></p>
+                            <p class="description">Nombre</p>
+                        </li>
+                        <li>
+                            <p id="matrL" class="element"><%= session["matricula"]%></p>
+                            <p class="description">Matrícula</p>
+                        </li>
+                        <li>
+                            <p id="niveL" class="element"><%= session["nivel"]%></p>
+                            <p class="description">Nivel</p>
+                        </li>
+                        <li>
+                            <p id="carrL" class="element"><%= session["carrera"]%></p>
+                            <p class="description">Carrera</p>
+                        </li>
+                        <li>
+                            <p id="semL" class="element"><%= session["periodo"]%></p>
+                            <p class="description">Semestre</p>
+                        </li>
+                        <li>
+                            <p id="concL" class="element"><%= session["concentracion"]%></p>
+                            <p class="description">Concentración</p>
+                        </li>
+                        <li>
+                            <p id="modL" class="element"><%= session["modalidad"]%></p>
+                            <p class="description">Modalidad</p>
+                        </li>
+                        <li>
+                            <p id="campL" class="element"><%= session["campus"]%></p>
+                            <p class="description">Campus</p>
+                        </li>
+                    </ul>
+                    <hr>
+                    <a href="/salida" style="color:#DBD7D7;"><i class="material-icons" style="color:#DBD7D7;font-size:16px">&#xE8C6;</i> Salir</a>
+                </div>
+            </aside>
+
+    <div class="overlay"></div>
+
+    <div class="site-wrapper-inner">
+
+
+            <div class="cover-container">
+            <div class="inner cover">
+                <h1 class="cover-heading">Turno de Inscripción</h1>
+                <p class="lead">Tu turno será activado el día <b id="fechaString"></b> , dentro de:</p>
+                <div id="clock"></div>
+		<!--<p>Da clic en el icono de tu red social favorita para avisarte en cuanto puedas acceder</p>
+		<a href="http://localhost:3000/sidi/auth/facebook"><img src="img/facebook-icon.png" style="width:50px; height:50px;" /></a>&nbsp;&nbsp;<a href="http://www.twitter.com"><img src="img/twitter.png" style="width:50px; height:50px;" /></a>&nbsp;&nbsp;<a href="https://mitec.itesm.mx/
+"><img src="img/mitec.jpeg" style="width:50px; height:50px;" /></a> -->
+                 <p align="center"></p>
+            </div>
+
+            <div class="mastfoot">
+                <div class="inner">
+                    <p>&copy; <a>2017 Tecnológico de Monterrey</a></p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<script>
+    function cambiaClass(){
+	document.getElementById("menuAyuda").className += " open";	
+    }	
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-1057679-2', 'auto');
+    ga('send', 'pageview');
+</script>
+
+<%end%>

@@ -1,0 +1,3 @@
+class TokenApps < ApplicationRecord
+
+end

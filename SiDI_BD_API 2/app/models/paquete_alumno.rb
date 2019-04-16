@@ -1,0 +1,2 @@
+class PaqueteAlumno < ApplicationRecord
+end

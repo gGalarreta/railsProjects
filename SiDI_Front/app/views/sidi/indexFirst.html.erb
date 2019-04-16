@@ -1,0 +1,220 @@
+<% content_for :head do %>
+    <%= stylesheet_link_tag 'notiFace' %>
+    <%= stylesheet_link_tag 'app.min' %>
+    <%= stylesheet_link_tag 'sweetalert-override.min' %>
+    <%= stylesheet_link_tag 'sweetalert2.min' %>
+    <%= javascript_include_tag 'jquery.min' %>
+    <%= javascript_include_tag 'methods' %>
+    <%= javascript_include_tag 'functions' %>
+    <%= javascript_include_tag 'horario' %>
+    <%= javascript_include_tag 'notifications' %>
+    <%= javascript_include_tag 'jquerysession' %>
+    <%= javascript_include_tag 'sweetalert2.min' %>
+    <%= javascript_include_tag 'bootstrap.min' %>
+    <%= javascript_include_tag 'angular.min' %>
+    <%= javascript_include_tag 'jquery.nicescroll.min' %>
+    <%= javascript_include_tag 'waves.min' %>
+    <%= javascript_include_tag 'bootstrap-growl.min' %>
+    <%= javascript_include_tag 'sweetalert.min' %>
+
+
+<script>
+	$( document ).ready(function() {
+        initPrin();
+	});
+</script>
+
+    </head>
+    <body class="p-b-15">
+        <header id="header">
+            <ul class="header-inner">
+                <li class="logo">
+                    <a id="initL" href="">
+                        <img src="img/logotec.png" alt="">
+                        <span>
+                            <strong>| &nbsp;&nbsp;Sistema de Inscripciones</strong>
+                        </span>
+                    </a>
+                </li>
+
+                <li class="pull-right yes-xs">
+                    <ul class="top-menu">
+			<li class="dropdown hidden-xs" >
+				<a data-toggle="dropdown" href="" class="name" style="margin-bottom:-10px;">
+					<div id="noti_Counter"></div>
+					
+					<div id="noti_Button"></div>
+				</a> 
+			</li>
+                        <li class="dropdown hidden-xs">
+                            <a data-toggle="dropdown" href="" class="name">AYUDA <i class="md-expand-more"></i></a>
+                            <ul class="dropdown-menu dm-icon pull-right">
+                                <li>
+                                    <a href=""><i class="md md-live-help"></i> Tutorial</a>
+                                </li>
+                                <li>
+                                    <a href=""><i class="md md-email"></i> Contacto</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="hidden-xs"  id="chat-trigger" data-trigger="#chat">
+                            <a id="nameT" href="" class="name"></a>
+                            <!-- <ul class="dropdown-menu dm-icon pull-right">
+
+                                <li>
+                                    <a href=""><i class="md md-settings-power"></i> Salir</a>
+                                </li>
+                            </ul> -->
+                        </li>
+                        <li class="visible-xs-block" id="chat-trigger" data-trigger="#chat">
+                            <a class="tm-chat" href=""></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </header>
+
+        <section id="main">
+            <aside id="chat">
+                <div class="listview">
+                    <h2>Mi Información</h2>
+                    <hr>
+                    <ul class="material-list">
+                        <li>
+                            <p id="nameL" class="element"></p>
+                            <p class="description">Nombre</p>
+                        </li>
+                        <li>
+                            <p id="matrL" class="element"></p>
+                            <p class="description">Matrícula</p>
+                        </li>
+                        <li>
+                            <p id="niveL" class="element"></p>
+                            <p class="description">Nivel</p>
+                        </li>
+                        <li>
+                            <p id="carrL" class="element"></p>
+                            <p class="description">Carrera</p>
+                        </li>
+                        <li>
+                            <p id="semL" class="element"></p>
+                            <p class="description">Semestre</p>
+                        </li>
+                        <li>
+                            <p id="concL" class="element"></p>
+                            <p class="description">Concentración</p>
+                        </li>
+                        <li>
+                            <p id="modL" class="element"></p>
+                            <p class="description">Modalidad</p>
+                        </li>
+                        <li>
+                            <p id="campL" class="element"></p>
+                            <p class="description">Campus</p>
+                        </li>
+                    </ul>
+                    <hr>
+                    <a href="#" onclick="salida()"><i class="md md-settings-power"></i> Salir</a>
+                </div>
+            </aside>
+            <section id="content">
+                <div class="container">
+                    <div class="row m-t-30">  <!-- Infromation && Status -->
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header bgm-bluegray">
+                                    <h2>Proceso de Inscripción</h2>
+                                </div>
+
+                                <div class="card-body">
+                                    <h4 class="f-400 p-l-25 p-t-10">Progreso de tu Inscripción</h4>
+                                    <div class="progress progress-striped active m-l-25 m-r-25">
+                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                            <span class="sr-only">0% Complete</span>
+                                        </div>
+                                    </div>
+                                    <p class="p-t-10 m-0 p-l-25 p-t-10">
+                                        Tiene <b>0</b> de <b>3</b> pasos terminados. <span class="c-red">No ha terminado su inscripción.</span>
+                                        <br><br>
+                                    </p>
+                                    <ul class="cbp-ig-grid m-b-30">
+                                        <li>
+                                            <a id="horL" href="" class="incomplete">
+                                                <span class="cbp-ig-icon md-today"></span>
+                                                <h3 class="cbp-ig-title">Selección de Horario</h3>
+                                                <span class="cbp-ig-category">Click para modificar.</span>
+                                                <span class="step-number">1</span>
+                                            </a>
+
+                                        </li>
+                                        <li>
+                                            <a href="#" class="not-available">
+                                                <span class="cbp-ig-icon md-layers"></span>
+                                                <h3 class="cbp-ig-title">Selección de Servicios</h3>
+                                                <span class="cbp-ig-category">Incompleto</span>
+                                                <span class="step-number">2</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="not-available">
+                                                <span class="cbp-ig-icon md-local-atm"></span>
+                                                <h3 class="cbp-ig-title">Pago de Colegiatura</h3>
+                                                <span class="cbp-ig-category">No Disponible</span>
+                                                <span class="step-number">3</span>
+                                            </a>
+                                        </li>
+                                    </ul>  <!-- Ends Dashboard Inscription Process -->
+                                </div>
+                            </div>
+                        </div>
+
+                    </div> <!-- Ends Infromation && Status -->
+
+                </div>
+            </section>
+        </section>
+
+        <!-- Older IE warning message -->
+        <!--[if lt IE 9]>
+            <div class="ie-warning">
+                <h1 class="c-white">Warning!!</h1>
+                <p>You are using an outdated version of Internet Explorer, please upgrade <br/>to any of the following web browsers to access this website.</p>
+                <div class="iew-container">
+                    <ul class="iew-download">
+                        <li>
+                            <a href="http://www.google.com/chrome/">
+                                <img src="img/browsers/chrome.png" alt="">
+                                <div>Chrome</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.mozilla.org/en-US/firefox/new/">
+                                <img src="img/browsers/firefox.png" alt="">
+                                <div>Firefox</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://www.opera.com">
+                                <img src="img/browsers/opera.png" alt="">
+                                <div>Opera</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.apple.com/safari/">
+                                <img src="img/browsers/safari.png" alt="">
+                                <div>Safari</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
+                                <img src="img/browsers/ie.png" alt="">
+                                <div>IE (New)</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <p>Sorry for the inconvenience!</p>
+            </div>
+        <![endif]-->
+<%end%>

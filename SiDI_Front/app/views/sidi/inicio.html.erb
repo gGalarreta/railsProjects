@@ -1,0 +1,255 @@
+<% content_for :head do %>
+    <%= stylesheet_link_tag 'notiFace' %>
+    <%= stylesheet_link_tag 'app.min' %>
+    <%= stylesheet_link_tag 'sweetalert2.min' %>
+    <%= javascript_include_tag 'jquery.min' %>
+    <%= javascript_include_tag 'methods' %>
+    <%= javascript_include_tag 'jquerysession' %>
+    <%= javascript_include_tag 'sweetalert2.min' %>
+    <%= javascript_include_tag 'bootstrap.min' %>
+    <%= javascript_include_tag 'jquery.nicescroll.min' %>
+    <%= javascript_include_tag 'waves.min' %>
+    <%= javascript_include_tag 'bootstrap-growl.min' %>
+    <%= javascript_include_tag 'functions' %>
+    <%= javascript_include_tag 'schedule' %>
+    <%= javascript_include_tag 'notifications' %>
+
+	<script>
+	$( document ).ready(function() {
+        cargaSem(<%= @sem %>);
+        var getToken = $("#token").val();
+        initVali(getToken);
+	});
+</script>
+        <header id="header">
+            <ul class="header-inner">
+                <li class="logo">
+                    <a id="initL" href="/inicio">
+                        <img src="<%= asset_path( 'logotec.png' ) %>" alt="">
+                        <span>
+                            <strong>| &nbsp;&nbsp;Sistema de Inscripciones</strong>
+                        </span>
+                    </a>
+                </li>
+
+                <li class="pull-right yes-xs">
+                    <ul class="top-menu">
+			<li class="dropdown hidden-xs" >
+				<a data-toggle="dropdown" href="" class="name" style="margin-bottom:-10px;">
+					<div id="noti_Counter"></div>
+					
+					<div id="noti_Button"></div>
+				</a> 
+			</li>
+                        <li class="dropdown hidden-xs">
+                            <a data-toggle="dropdown" href="" class="name">AYUDA <i class="md-expand-more"></i></a>
+                            <ul class="dropdown-menu dm-icon pull-right">
+                                <li>
+                                    <a href=""><i class="md md-live-help"></i> Tutorial</a>
+                                </li>
+                                <li>
+                                    <a href=""><i class="md md-email"></i> Contacto</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="hidden-xs"  id="chat-trigger" data-trigger="#chat" >
+                            <a id="nameT" href="" class="name"><%= session["nombre"]%><i class='md-expand-more'></i></a>
+                        </li>
+                        <li class="visible-xs-block" id="chat-trigger" data-trigger="#chat">
+                            <a class="tm-chat" href=""></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </header>
+
+        <section id="main" >
+            <aside id="chat">
+                <div class="listview">
+                    <h2>Mi Información</h2>
+                    <hr>
+                    <ul class="material-list">
+                        <li>
+                            <p id="nameL" class="element"><%= session["nombre"]%></p>
+                            <p class="description">Nombre</p>
+                        </li>
+                        <li>
+                            <p id="matrL" class="element"><%= session["matricula"]%></p>
+                            <p class="description">Matrícula</p>
+                        </li>
+                        <li>
+                            <p id="niveL" class="element"><%= session["nivel"]%></p>
+                            <p class="description">Nivel</p>
+                        </li>
+                        <li>
+                            <p id="carrL" class="element"><%= session["carrera"]%></p>
+                            <p class="description">Carrera</p>
+                        </li>
+                        <li>
+                            <p id="semL" class="element"><%= session["periodo"]%></p>
+                            <p class="description">Semestre</p>
+                        </li>
+                        <li>
+                            <p id="concL" class="element"><%= session["concentracion"]%></p>
+                            <p class="description">Concentración</p>
+                        </li>
+                        <li>
+                            <p id="modL" class="element"><%= session["modalidad"]%></p>
+                            <p class="description">Modalidad</p>
+                        </li>
+                        <li>
+                            <p id="campL" class="element"><%= session["campus"]%></p>
+                            <p class="description">Campus</p>
+                        </li>
+                    </ul>
+                    <hr>
+                    <a href="/salida"><i class="md md-settings-power"></i> Salir</a>
+                </div>
+            </aside>
+            <section id="content">
+                <div class="container">
+                    <div class="row m-t-30">  <!-- Infromation && Status -->
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header bgm-bluegray">
+                                    <h2>Proceso de Inscripción</h2>
+                                </div>
+                                <div class="card-body">
+                                    <h4 class="f-400 p-l-25 p-t-10">Progreso de tu Inscripción</h4>
+                                    <div class="progress progress-striped active m-l-25 m-r-25">
+                                        <div id="barMed" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">
+                                            <span id="porcentC" class="sr-only"></span>
+                                        </div>
+                                    </div>
+
+                                    <p class="p-t-10 m-0 p-l-25 p-t-10">
+                                        Tiene <b id="pasoH"></b> de <b id="totalH"></b> pasos terminados. <span id="msgPaso" class="c-red"></span>
+                                        <br><br>
+                                    </p>
+                                    <ul class="cbp-ig-grid m-b-30">
+                                        <li>
+                                            <a id="horL" class="">
+                                                <span class="cbp-ig-icon md-today"></span>
+                                                <h3 class="cbp-ig-title">Selección de Horario</h3>
+                                                <span id="horLm" class="cbp-ig-category"></span>
+                                                <span class="step-number">1</span>
+                                            </a>
+
+                                        </li>
+                                        <li>
+                                            <a id="servL" class="">
+                                                <span class="cbp-ig-icon md-layers"></span>
+                                                <h3 class="cbp-ig-title">Selección de Servicios</h3>
+                                                <span id="servLm" class="cbp-ig-category"></span>
+                                                <span class="step-number">2</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a id="bolL" class="">
+                                                <span class="cbp-ig-icon md-local-atm"></span>
+                                                <h3 class="cbp-ig-title">Pago de Colegiatura</h3>
+                                                <span id="bolLm" class="cbp-ig-category"></span>
+                                                <span class="step-number">3</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="titHor" class="block-header" style="visibility: hidden;">
+                        <h2>Consulta Horario</h2>
+                    </div>
+
+                    <div id="cardHor" class="card" style="visibility: hidden;">
+                        <div class="card-body card-padding">
+                            <div role="tabpanel">
+                                <ul class="tab-nav" role="tablist">
+                                    <li class="active"><a href="#schedule" aria-controls="schedule" role="tab" data-toggle="tab">Horario</a></li>
+                                    <li><a href="#info" aria-controls="info" role="tab" data-toggle="tab">Resumen</a></li>
+                                </ul>
+
+                                <div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane active" id="schedule">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped schedule-big" id="scheduleHome">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Hora</th>
+                                                        <th class="bgm-lightblue c-white">Lunes</th>
+                                                        <th class="bgm-lightblue c-white">Martes</th>
+                                                        <th class="bgm-lightblue c-white">Miércoles</th>
+                                                        <th class="bgm-lightblue c-white">Jueves</th>
+                                                        <th class="bgm-lightblue c-white">Viernes</th>
+                                                        <th class="bgm-lightblue c-white">Sábado</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div role="tabpanel" class="tab-pane" id="info"> <!-- Template to show card of each subject -->
+                                        <div class="row summary">
+                                            <div class="col-sm-6 summary-card">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <h2></h2>
+                                                    </div>
+                                                    <div class="card-body card-padding">
+                                                        <ul class="material-list summary-list">
+                                                            <li>
+                                                                <p class="element teachers"></p>
+                                                                <p class="description">Profesor</p>
+                                                            </li>
+                                                            <li>
+                                                                <p class="element date"></p>
+                                                                <p class="description">Fecha</p>
+                                                            </li>
+                                                            <li>
+                                                                <p class="element class-schedule"></p>
+                                                                <p class="description">Horario</p>
+                                                            </li>
+                                                            <li>
+                                                                <p class="element building-classroom"></p>
+                                                                <p class="description">Edificio y Salón</p>
+                                                            </li>
+                                                            <li>
+                                                                <p class="element options"></p>
+                                                                <p class="description">Atributos</p>
+                                                            </li>
+                                                            <li>
+                                                                <p class="element parent-course"></p>
+                                                                <p class="description">Acredita</p>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- Ends Schedule -->
+                </div>
+            </section>
+        </section>
+        <%= hidden_field_tag :token, session[:token]%>
+        <script>
+
+        // Dummy array of subjects
+
+        $(document).ready(function() {
+            //assignColors();
+            //printScheduleHome(); // Prints schedule out of dummy data
+            //printSummary(); // Prints summary with the template and dummy data
+            var arrNoti = ["No tienes ninguna configuracion asignada"];
+            notification(arrNoti,0);
+        });
+        </script>
+<%end%>

@@ -1,0 +1,2 @@
+class CNiveles < ApplicationRecord
+end

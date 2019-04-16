@@ -1,0 +1,3 @@
+class CAtributos < ApplicationRecord
+
+end

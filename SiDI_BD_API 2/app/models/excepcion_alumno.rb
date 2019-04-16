@@ -1,0 +1,2 @@
+class ExcepcionAlumno < ApplicationRecord
+end

@@ -1,0 +1,2 @@
+class TurnoAlumnos < ApplicationRecord
+end

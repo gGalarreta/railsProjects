@@ -1,0 +1,2 @@
+class InscripcionAnterior < ApplicationRecord
+end

@@ -1,0 +1,2 @@
+class CCarreras < ApplicationRecord
+end

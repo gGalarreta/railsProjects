@@ -1,0 +1,2 @@
+class LogAlumno < ApplicationRecord
+end

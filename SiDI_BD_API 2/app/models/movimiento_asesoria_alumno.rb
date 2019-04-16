@@ -1,0 +1,2 @@
+class MovimientoAsesoriaAlumno < ApplicationRecord
+end

@@ -1,0 +1,2 @@
+class MateriaAlumno < ApplicationRecord
+end

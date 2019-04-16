@@ -1,0 +1,101 @@
+<% content_for :head do %>
+    <%= stylesheet_link_tag 'bootstrap.min' %>
+    <%= stylesheet_link_tag 'roboto' %>
+    <%= stylesheet_link_tag 'font-awesome.min' %>
+    <%= stylesheet_link_tag 'login' %>
+    <%= stylesheet_link_tag 'docs' %>
+    <%= stylesheet_link_tag 'sweetalert2.min' %>
+    <%= javascript_include_tag 'jquery.min' %>
+    <%= javascript_include_tag 'methods' %>
+    <%= javascript_include_tag 'jquerysession' %>
+    <%= javascript_include_tag 'sweetalert2.min' %>
+
+    <div id="loginContent" class="container">
+        <div class="card card-container animated bounceInUp" style="box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 17px 0px, rgba(0, 0, 0, 0.188235) 0px 6px 20px 0px;">
+            <h1>
+
+            <img id="profile-img" class="profile-img-card animated fadeIn delay" src="<%= asset_path( 'avatar_2x.png' ) %>" />
+            <div align="center">SISTEMA DE INSCRIPCIONES</div>
+            </h1>
+          <p id="profile-name" class="profile-name-card"></p>
+          <%= form_tag("/acceso", method: "post", class:"form-signin animated fadeIn delay") do %>
+                <span id="reauth-email" class="reauth-email"></span>
+                <%= text_field_tag :matricula, "", placeholder: "Matricula", class:"form-control" %>
+                <%= password_field_tag :password, "", placeholder: "Password", class:"form-control" %>
+                <%= hidden_field_tag :ip %>
+                <%= hidden_field_tag :navegador %>
+
+              <%= submit_tag "INGRESAR", class:"btn btn-lg btn-primary btn-block btn-signin" %>
+            <% end %>
+            <p><!-- /form -->
+              <a href="#" class="forgot-password animated fadeIn delay">
+                ¿Olvidaste tu contraseña?
+              </a>
+            </p>
+
+            <hr class="animated fadeIn delay">
+            <p class="animated fadeIn delay" align="center"><img src="<%= asset_path( '320x480-tec.png' ) %>" width="221" height="73" alt=""/>
+              
+            </p>
+            <hr class="animated fadeIn delay">
+            <p align="center" class="animated fadeIn delay"><a href="#" class="forgot-password">Preguntas frecuentes</a> | <a href="#" class="forgot-password">Ayuda</a> | <a href="#">Activa tu cuenta</a></p>
+        </div>
+      <%= hidden_field_tag :error, @error %>
+        <!-- /card-container -->
+    </div><!-- /container -->
+    <% unless @data.nil? %>
+        <%= hidden_field_tag :modal, "on" %>
+        <% @data.each {|x|%>
+            <% x.each {|i|%>
+                <%= form_tag("/turno", method: "post", id: i["id_periodo"], style: "display: none;") do %>
+                    <%= hidden_field_tag :periodo, i["id_periodo"], style: "display: none;" %>
+                    <%= hidden_field_tag :token, @token , style: "display: none;"%>
+                    <%= hidden_field_tag :campus, i["id_campus"] , style: "display: none;"%>
+                <%end%>
+            <% } %>
+        <%}%>
+
+      <div id="periModal" class="fade" align="center">
+                <ul style='list-style-type: none; margin-left:-45px;' >
+                  <% @data.each {|x|%>
+                      <% x.each {|i|%>
+                            <li><a style="cursor:pointer;"><%= link_to i["descripcion"], "", :onclick => "$('\##{i["id_periodo"]}').submit()" %></a></li>
+                      <% } %>
+                  <%}%>
+                </ul>
+      </div>
+    <%end%>
+<script>
+    $.getJSON("http://jsonip.com/?callback=?", function (data) {
+        $('#ip').val(data.ip);
+        $('#navegador').val(navigator.appVersion);
+    });
+
+    $(document).ready(function(){
+
+      var div = $('#periModal').html();
+
+      var err = $('#error').val();
+
+      if(err != "") {
+        swal("Ups! Algo resulto mal", err, "error");
+      }
+
+      if(div != undefined) {
+        swal({
+          title: "Periodos de Inscripcion",
+          text: div,
+          showCancelButton: false,
+          showConfirmButton: false,
+          closeOnConfirm: true,
+          showLoaderOnConfirm: true,
+          allowOutsideClick: false,
+        });
+      }
+
+    });
+
+</script>
+
+
+<%end%>

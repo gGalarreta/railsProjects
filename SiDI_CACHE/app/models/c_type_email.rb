@@ -1,0 +1,2 @@
+class CTypeEmail < ApplicationRecord
+end

@@ -1,0 +1,2 @@
+class CCampu < ApplicationRecord
+end
